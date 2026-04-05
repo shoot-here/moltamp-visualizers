@@ -1,0 +1,7 @@
+{
+  "id": "spectrum",
+  "name": "Spectrum",
+  "description": "Rainbow frequency bars split at midline",
+  "author": "Moltamp",
+  "dataType": "frequency"
+}

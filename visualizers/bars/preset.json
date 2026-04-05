@@ -1,0 +1,7 @@
+{
+  "id": "bars",
+  "name": "Bars",
+  "description": "Classic frequency bars with beat scaling and accent peaks",
+  "author": "Moltamp",
+  "dataType": "frequency"
+}

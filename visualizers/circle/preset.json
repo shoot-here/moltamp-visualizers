@@ -1,0 +1,7 @@
+{
+  "id": "circle",
+  "name": "Circle",
+  "description": "Radial frequency bars from center with gradient fill and beat wobble",
+  "author": "Moltamp",
+  "dataType": "frequency"
+}

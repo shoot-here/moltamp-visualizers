@@ -1,0 +1,7 @@
+{
+  "id": "wave",
+  "name": "Wave",
+  "description": "Dual waveform display with glow on beat",
+  "author": "Moltamp",
+  "dataType": "waveform"
+}
