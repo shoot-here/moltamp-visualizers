@@ -1,6 +1,18 @@
+<div align="center">
+
+<a href="https://moltamp.com">
+  <img src=".github/assets/logo.png" alt="MOLTamp" width="56"/>
+</a>
+
+<br/><br/>
+
 # Contributing to MOLTamp Visualizers
 
-Thanks for building a visualizer preset. Here's how to get it into the repo.
+**Thanks for building a visualizer preset.** Here's how to get it into the repo.
+
+</div>
+
+<br/>
 
 ## Quick Version
 
@@ -57,3 +69,11 @@ You can use ChatGPT, Claude, Codex, etc. to generate presets. See the "For AI-Ge
 ## Code of Conduct
 
 Be respectful. Share your creativity. Help others build cool visualizers.
+
+<br/>
+
+<div align="center">
+
+<sub><a href="https://moltamp.com">moltamp.com</a> &nbsp;&middot;&nbsp; <a href="VISUALIZERS.md">Authoring Guide</a> &nbsp;&middot;&nbsp; <a href="README.md">Back to README</a></sub>
+
+</div>

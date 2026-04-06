@@ -2,14 +2,26 @@
 
 <img src=".github/assets/banner.svg" alt="MOLTamp Visualizers" width="100%"/>
 
+<br/>
+
+<a href="https://moltamp.com">
+  <img src=".github/assets/logo.png" alt="MOLTamp" width="80" style="margin: 16px 0;"/>
+</a>
+
+<br/>
+
+<a href="https://moltamp.com">
+  <img src=".github/assets/hero-link.png" alt="MOLTamp — Skinnable Shell for AI Terminals" width="720" style="border-radius: 12px; margin: 8px 0;"/>
+</a>
+
 <br/><br/>
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
-[![Presets](https://img.shields.io/badge/presets-4-00ccaa.svg?style=flat-square)](#browse-presets)
-[![Spec](https://img.shields.io/badge/spec-v1.0-4d9fff.svg?style=flat-square)](VISUALIZERS.md)
-[![Website](https://img.shields.io/badge/moltamp.com-visualizers-a855f7.svg?style=flat-square)](https://moltamp.com/visualizers/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-4d9fff.svg?style=flat-square&labelColor=08080a)](LICENSE)
+[![Presets](https://img.shields.io/badge/presets-4-a855f7.svg?style=flat-square&labelColor=08080a)](#browse-presets)
+[![Spec](https://img.shields.io/badge/spec-v1.0-4d9fff.svg?style=flat-square&labelColor=08080a)](VISUALIZERS.md)
+[![Website](https://img.shields.io/badge/moltamp.com-visualizers-ff6b4d.svg?style=flat-square&labelColor=08080a)](https://moltamp.com/visualizers/)
 
-**[Download MOLTamp](https://moltamp.com)** &nbsp;&middot;&nbsp; **[Authoring Guide](VISUALIZERS.md)**
+**[Download MOLTamp](https://moltamp.com)** &nbsp;&middot;&nbsp; **[Authoring Guide](VISUALIZERS.md)** &nbsp;&middot;&nbsp; **[Contributing](CONTRIBUTING.md)**
 
 </div>
 
@@ -166,6 +178,12 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and checklist.
 <br/>
 
 <div align="center">
+
+<a href="https://moltamp.com">
+  <img src=".github/assets/logo.png" alt="MOLTamp" width="32"/>
+</a>
+
+<br/>
 
 <sub>Made for the community by <a href="https://moltamp.com">MOLTamp</a></sub>
 
