@@ -75,7 +75,7 @@ moltamp-visualizers/
 
 ```bash
 git clone https://github.com/shoot-here/moltamp-visualizers.git
-cp -r moltamp-visualizers/visualizers/circle ~/.moltamp/visualizers/
+cp -r moltamp-visualizers/visualizers/circle ~/Moltamp/visualizers/
 ```
 
 Restart Moltamp and pick the preset from the visualizer dropdown in the vibes panel.
