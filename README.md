@@ -1,103 +1,111 @@
 <div align="center">
 
-<a href="https://moltamp.com">
-  <img src=".github/assets/hero-link.png" alt="MOLTamp — Skinnable Shell for AI Terminals" width="720" style="border-radius: 12px; margin: 16px 0;"/>
-</a>
+<img src="https://raw.githubusercontent.com/shoot-here/moltamp-visualizers/main/.github/assets/banner.svg" alt="Moltamp Visualizers — audio-reactive Canvas presets for AI terminals" width="100%"/>
 
 <br/><br/>
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-4d9fff.svg?style=flat-square&labelColor=08080a)](LICENSE)
-[![Presets](https://img.shields.io/badge/presets-4-a855f7.svg?style=flat-square&labelColor=08080a)](#browse-presets)
-[![Spec](https://img.shields.io/badge/spec-v1.0-4d9fff.svg?style=flat-square&labelColor=08080a)](VISUALIZERS.md)
-[![Website](https://img.shields.io/badge/moltamp.com-visualizers-ff6b4d.svg?style=flat-square&labelColor=08080a)](https://moltamp.com/visualizers/)
+# Moltamp Visualizers
 
-**[Download MOLTamp](https://moltamp.com)** &nbsp;&middot;&nbsp; **[Authoring Guide](VISUALIZERS.md)** &nbsp;&middot;&nbsp; **[Contributing](CONTRIBUTING.md)**
+**Audio-reactive Canvas 2D presets for the Moltamp cockpit shell — vibe coding visuals for Claude Code, Codex CLI, Gemini CLI, and Aider.**
+
+[![License: MIT](https://img.shields.io/github/license/shoot-here/moltamp-visualizers?style=flat-square&color=4d9fff&labelColor=08080a)](LICENSE)
+[![Presets](https://img.shields.io/badge/presets-4-a855f7?style=flat-square&labelColor=08080a)](#featured-presets)
+[![Spec](https://img.shields.io/badge/spec-VISUALIZERS.md-4d9fff?style=flat-square&labelColor=08080a)](VISUALIZERS.md)
+[![Gallery](https://img.shields.io/badge/gallery-moltamp.com-ff6b4d?style=flat-square&labelColor=08080a)](https://moltamp.com/community)
+
+**[Download Moltamp](https://moltamp.com)** &nbsp;&middot;&nbsp; **[Browse the Gallery](https://moltamp.com/community)** &nbsp;&middot;&nbsp; **[Authoring Guide](VISUALIZERS.md)** &nbsp;&middot;&nbsp; **[Contributing](CONTRIBUTING.md)**
 
 </div>
 
 <br/>
 
-## What is MOLTamp?
+## What's this repo?
 
-MOLTamp wraps Claude Code's terminal in a skinnable cockpit UI — vibes panel, side panels, telemetry ticker, reactive animations. The **Visualizer widget** renders audio-reactive Canvas 2D animations driven by microphone input, beat detection, and the active skin's color palette.
+This is the open-source visualizer library for **[Moltamp](https://moltamp.com)** — a skinnable cockpit UI for AI coding terminals like **Claude Code**, **Codex CLI**, **Gemini CLI**, and **Aider**. A Moltamp visualizer is an **audio-reactive Canvas 2D preset** that renders inside the vibes banner above your terminal — bars, waveforms, particles, geometry, anything that pulses to the music while you code.
 
-> Pure Canvas 2D. No libraries. No WebGL. Full creative freedom.
+Visualizers run as **single-file render functions**. No DOM, no libraries, no WebGL. Microphone audio is FFT-analyzed by Moltamp and handed to your renderer as a `Uint8Array` along with beat detection state and the active skin's color palette — so every preset automatically retones for every theme.
+
+If you've ever wanted lo-fi beats with a Winamp-style visualizer pulsing above your AI pair-programmer — this is the place.
+
+> **Keywords:** Claude Code visualizer, AI terminal visualizer, audio reactive canvas, music visualizer, Winamp visualizer, vibe coding, Codex CLI visuals, Gemini CLI visuals, Aider visuals, Moltamp.
 
 <br/>
 
-## Browse Presets
+## Featured Presets
 
 <table>
 <tr>
-<td align="center" width="25%">
-
-**Bars**<br/>
-<sub>Classic frequency bars with beat scaling</sub>
-
-</td>
-<td align="center" width="25%">
-
-**Circle**<br/>
-<sub>Radial frequency bars with gradient fill</sub>
-
-</td>
-<td align="center" width="25%">
-
-**Spectrum**<br/>
-<sub>Rainbow frequency bars split at midline</sub>
-
-</td>
-<td align="center" width="25%">
-
-**Wave**<br/>
-<sub>Dual waveform with glow on beat</sub>
-
-</td>
+<td align="center" width="25%"><b>Bars</b><br/><sub>Classic frequency bars with beat scaling</sub></td>
+<td align="center" width="25%"><b>Circle</b><br/><sub>Radial frequency bars with gradient fill</sub></td>
+<td align="center" width="25%"><b>Spectrum</b><br/><sub>Rainbow bars split at the midline</sub></td>
+<td align="center" width="25%"><b>Wave</b><br/><sub>Dual waveform with glow on beat</sub></td>
 </tr>
 <tr>
-<td align="center" colspan="4">
-
-*Your preset here* &rarr; [submit a PR](#contributing)
-
-</td>
+<td align="center" colspan="4"><i>Your preset here</i> &rarr; <a href="#contribute-a-preset">submit a PR</a></td>
 </tr>
 </table>
 
+Browse every community preset (with live previews) at **[moltamp.com/community](https://moltamp.com/community)**.
+
 <br/>
 
-## Install
+## What's in this repo
 
-```bash
-# Clone and copy
-git clone https://github.com/shoot-here/moltamp-visualizers.git
-cp -r moltamp-visualizers/visualizers/circle ~/Moltamp/visualizers/
+```
+moltamp-visualizers/
+├── visualizers/        <- One folder per preset (drop-in installable)
+│   ├── bars/
+│   ├── circle/
+│   ├── spectrum/
+│   └── wave/
+├── VISUALIZERS.md      <- Full render-function spec — read this first
+├── CONTRIBUTING.md     <- PR checklist + review criteria
+└── README.md
 ```
 
-Or: **MOLTamp > Settings > Visualizers > Import** &rarr; select folder or `.zip`
+<br/>
+
+## Install a preset
+
+**Inside Moltamp** (recommended):
+
+> Settings &rarr; Visualizers &rarr; Import &rarr; pick the preset folder or `.zip`.
+
+**From the command line:**
+
+```bash
+git clone https://github.com/shoot-here/moltamp-visualizers.git
+cp -r moltamp-visualizers/visualizers/circle ~/.moltamp/visualizers/
+```
+
+Restart Moltamp and pick the preset from the visualizer dropdown in the vibes panel.
 
 <br/>
 
-## Create a Preset
+## Build a preset in 60 seconds
+
+A preset is two files in a folder:
 
 ```
 visualizers/my-preset/
   preset.json       <- manifest
-  renderer.js       <- render function
+  renderer.js       <- the render function
 ```
 
-### `preset.json`
+**`preset.json`**
 
 ```json
 {
   "id": "my-preset",
   "name": "My Preset",
-  "description": "What it looks like in one sentence.",
+  "version": "1.0.0",
   "author": "Your Name",
+  "description": "What it looks like in one sentence.",
   "dataType": "frequency"
 }
 ```
 
-### `renderer.js`
+**`renderer.js`**
 
 ```js
 module.exports = function(ctx, data, W, H, colors, beat) {
@@ -111,70 +119,65 @@ module.exports = function(ctx, data, W, H, colors, beat) {
 };
 ```
 
-### The Render Function
+That's a working preset. The full argument reference, advanced techniques, performance tips, and a ready-to-paste AI prompt block all live in **[VISUALIZERS.md](VISUALIZERS.md)**.
+
+<br/>
+
+## Render-function arguments
 
 | Arg | Type | Description |
 |-----|------|-------------|
-| `ctx` | `CanvasRenderingContext2D` | Drawing context (2x Retina scaled) |
-| `data` | `Uint8Array` | Audio data — frequency bins (0-255) or waveform samples |
+| `ctx` | `CanvasRenderingContext2D` | Drawing context (Retina-scaled) |
+| `data` | `Uint8Array` | Frequency bins (0-255) or waveform samples |
 | `W`, `H` | `number` | Canvas size in CSS pixels |
 | `colors` | `object` | Skin palette: `accent`, `dim`, `magenta`, `cyan`, `green`, `red`, `yellow`, `blue` |
-| `beat` | `object` | Beat state: `energy`, `peak`, `isBeat`, `decay` (0-1, smooth falloff) |
-| `waveData` | `Uint8Array?` | Waveform data (only when `dataType` is `"both"`) |
+| `beat` | `object` | `energy`, `peak`, `isBeat`, `decay` (0-1, smooth falloff) |
+| `waveData` | `Uint8Array?` | Waveform data when `dataType` is `"both"` |
 
-> **Full spec:** [VISUALIZERS.md](VISUALIZERS.md) &mdash; every argument, advanced techniques, AI prompt block, performance tips.
-
-<br/>
-
-## Guidelines
-
-| # | Guideline |
-|---|-----------|
-| 1 | Use `colors.*` from skin palette — no hardcoded hex |
-| 2 | Reset `globalAlpha`, `shadowBlur` at end of render |
-| 3 | Cap loops: `Math.min(data.length, 64)` |
-| 4 | No DOM, no `require`/`import` — pure Canvas 2D |
-| 5 | No unbounded state (arrays growing each frame) |
-| 6 | Target 60fps — keep the render function tight |
-
-<br/>
-
-## Beat Reactivity
-
-`beat.decay` is your best friend — it jumps to 1 on each beat and smoothly falls back to 0. Multiply it into sizes, alphas, and blur radii for smooth pulsing:
+`beat.decay` is your best friend — it jumps to 1 on each beat and smoothly falls back to 0. Multiply it into sizes, alphas, and blur radii for buttery pulsing:
 
 ```js
-var lineWidth = 1.5 + beat.decay * 2;      // Thickens on beat
-ctx.shadowBlur = beat.decay * 10;           // Glow pulses
-var scale = 1 + beat.decay * 0.15;          // Subtle size pulse
+var lineWidth = 1.5 + beat.decay * 2;       // Thickens on beat
+ctx.shadowBlur  = beat.decay * 10;           // Glow pulses
+var scale       = 1 + beat.decay * 0.15;    // Subtle size pulse
 ```
 
 <br/>
 
-## Using AI
+## Generate one with AI
 
-Point ChatGPT, Claude, or Codex at [VISUALIZERS.md](VISUALIZERS.md) — it has a ready-to-paste prompt block in the **"For AI-Generated Presets"** section with the full render function spec.
+Point Claude, ChatGPT, Codex, or any LLM at **[VISUALIZERS.md](VISUALIZERS.md)** — it includes a complete prompt block in the *"For AI-Generated Presets"* section with the full render-function spec and the most common pitfalls AI tools hit.
 
 <br/>
 
-## Contributing
+## Contribute a preset
 
-1. Fork this repo
+1. **Fork** this repo
 2. Create `visualizers/your-preset-id/` with `preset.json` + `renderer.js`
-3. [Open a PR](../../pulls)
+3. Test it against a few skins (light + dark palettes)
+4. Run through the checklist in **[CONTRIBUTING.md](CONTRIBUTING.md)**
+5. **[Open a PR](../../pulls)** — we review weekly
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide and checklist.
+Merged presets ship in the next Moltamp release and appear in the in-app visualizer dropdown plus **[moltamp.com/community](https://moltamp.com/community)**.
+
+<br/>
+
+## License
+
+[MIT](LICENSE) — use, fork, remix, ship. Attribution appreciated but not required.
 
 <br/>
 
 <div align="center">
 
 <a href="https://moltamp.com">
-  <img src=".github/assets/logo.png" alt="MOLTamp" width="32"/>
+  <img src=".github/assets/logo.png" alt="Moltamp" width="32"/>
 </a>
 
 <br/>
 
-<sub>Made for the community by <a href="https://moltamp.com">MOLTamp</a></sub>
+<sub>Made for the community by <a href="https://moltamp.com">Moltamp</a></sub>
 
 </div>
+
+<!-- repo topics: moltamp, claude-code, claude-code-visualizer, ai-terminal, audio-visualizer, canvas2d, music-visualizer, electron, vibe-coding, codex-cli, gemini-cli, aider, developer-tools, beat-detection -->
