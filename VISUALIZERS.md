@@ -1,6 +1,6 @@
-# Moltamp Visualizer Preset Specification v1.0
+# MOLTamp Visualizer Preset Specification v1.0
 
-The single source of truth for building Moltamp audio visualizer presets.
+The single source of truth for building MOLTamp audio visualizer presets.
 
 ## Quick Start
 
@@ -14,10 +14,55 @@ $EDITOR ~/Moltamp/visualizers/my-viz/preset.json
 # 3. Write your renderer
 $EDITOR ~/Moltamp/visualizers/my-viz/renderer.js
 
-# 4. Open Moltamp — your preset appears in the visualizer settings
+# 4. Open MOLTamp — your preset appears in the visualizer settings
 ```
 
 Click the gear icon on the Visualizer widget, select your preset, and iterate.
+
+---
+
+## Audio Source
+
+MOLTamp captures **system audio output** — whatever is playing through your speakers or headphones — via macOS Core Audio. There is no microphone access. It reads the audio output device directly.
+
+The raw audio is processed into two forms before it reaches your renderer:
+
+- **Frequency data (FFT)** — a spectral decomposition of the audio signal into frequency bins
+- **Waveform data** — the raw amplitude samples of the audio signal
+
+Which form you receive depends on the `dataType` field in your `preset.json`.
+
+If no audio is playing, `data` will contain near-zero values for frequency mode, or flat `128` values (silence) for waveform mode. Your renderer should handle this gracefully — don't divide by zero, and consider drawing a subtle idle state rather than a blank canvas.
+
+Audio capture is permission-gated. Users enable it in **MOLTamp Settings > Audio**. If audio capture is disabled, your renderer still runs but receives silent data.
+
+---
+
+## Where Visualizers Live
+
+The Visualizer is a widget inside MOLTamp's panel system. Here's where it sits in the layout:
+
+```
++-------------------------------------+
+|  TITLEBAR                           |
++-------------------------------------+
+|  VIBES                              |
++--------+----------------+-----------+
+|  LEFT  |   TERMINAL     |  RIGHT    |
+|  Panel |                |  Panel    |
+|        |                | +-------+ |
+|        |                | |VISUAL-| |
+|        |                | | IZER  | | <-- Your renderer
+|        |                | |WIDGET | |     draws here
+|        |                | +-------+ |
++--------+----------------+-----------+
+|  BOTTOM                             |
++-------------------------------------+
+```
+
+The Visualizer widget can be placed in any panel tab. Most skins put it in a right-panel tab alongside the Equalizer and Music widgets. Your renderer draws on the widget's `<canvas>` element — you don't control where the widget appears in the layout. The skin and user configuration determine that.
+
+The canvas fills the widget's allocated space. `W` and `H` tell you how big it is on any given frame.
 
 ---
 
@@ -47,7 +92,7 @@ Exception: computed colors using `hsla()` or `rgba()` are fine when you need dyn
 
 ### 4. Fail Silently
 
-If your renderer throws, Moltamp skips the frame and moves on. No error UI, no crash. But don't rely on this — keep your code defensive.
+If your renderer throws, MOLTamp skips the frame and moves on. No error UI, no crash. But don't rely on this — keep your code defensive.
 
 ### 5. Clean Up After Yourself
 
@@ -55,15 +100,26 @@ Reset `globalAlpha`, `shadowBlur`, `lineWidth`, and other context state at the e
 
 ---
 
+## Visualizer vs. Equalizer
+
+MOLTamp has two audio-related widgets that are easy to confuse:
+
+- **Visualizer widget** — renders your preset. A freeform canvas driven by audio data. This is what you're building.
+- **Equalizer widget** — a separate, built-in widget that shows a fixed 10-band EQ display. Not customizable via presets.
+
+Both use the same audio source (system audio capture) and the same FFT data pipeline. They are independent widgets — your preset does not affect the EQ display and vice versa. Users can display both simultaneously in the same panel or in different tabs.
+
+---
+
 ## File Structure
 
 ```
 ~/Moltamp/visualizers/my-viz/
-├── preset.json      ← Required: manifest
-└── renderer.js      ← Required: render function
++-- preset.json      <-- Required: manifest
++-- renderer.js      <-- Required: render function
 ```
 
-Drop the folder into `~/Moltamp/visualizers/` and it appears. Delete it and it's gone. No registration, no config files.
+Drop the folder into `~/Moltamp/visualizers/` and it appears. Delete it and it's gone. No registration, no config files. You can organize presets into subcategory folders — discovery is recursive up to 3 levels deep. Only the `id` in `preset.json` matters, not the folder name.
 
 ### preset.json
 
@@ -73,6 +129,7 @@ Drop the folder into `~/Moltamp/visualizers/` and it appears. Delete it and it's
   "name": "My Viz",
   "description": "What it looks like in one sentence.",
   "author": "Your Name",
+  "version": "1.0.0",
   "dataType": "frequency"
 }
 ```
@@ -83,13 +140,14 @@ Drop the folder into `~/Moltamp/visualizers/` and it appears. Delete it and it's
 | `name` | Yes | Display name in the preset picker. |
 | `description` | No | Short description (shown on hover). |
 | `author` | No | Credit line. |
+| `version` | No | Semantic version string. Defaults to `"1.0.0"`. |
 | `dataType` | No | Audio data type. Defaults to `"frequency"`. |
 
 #### dataType
 
 | Value | What you get | Best for |
 |-------|-------------|----------|
-| `"frequency"` | FFT frequency bins (0–255 per bin) | Bars, spectrum, radial |
+| `"frequency"` | FFT frequency bins (0-255 per bin) | Bars, spectrum, radial |
 | `"waveform"` | Raw audio waveform (128 = silence) | Oscilloscopes, waves |
 | `"both"` | Frequency as `data`, waveform as `waveData` (7th arg) | Complex presets like Milkdrop |
 
@@ -122,6 +180,22 @@ The comment header (`// @moltamp-visualizer: Name`) is a convention, not enforce
 | `beat` | `object` | Beat detection state — see below. |
 | `waveData` | `Uint8Array \| undefined` | Waveform data. Only present when `dataType` is `"both"`. |
 
+### Retina Scaling
+
+The canvas is created at 2x resolution for Retina displays (`devicePixelRatio = 2`). The context is pre-scaled via `ctx.scale(2, 2)` before your renderer is called.
+
+What this means for you: **nothing.** Draw using `W` and `H` as your bounds and everything works correctly on both Retina and non-Retina displays. You do not need to handle DPR yourself.
+
+```js
+// This fills the entire visible canvas correctly on any display
+ctx.fillRect(0, 0, W, H);
+
+// This draws a centered circle correctly — no DPR math needed
+ctx.arc(W / 2, H / 2, 50, 0, Math.PI * 2);
+```
+
+`W` and `H` are CSS pixel dimensions. The actual canvas buffer is `W * 2` by `H * 2` pixels, but the pre-scaling means your coordinates map 1:1 to what the user sees.
+
 ### The `colors` Object
 
 Resolved from the active skin's CSS variables at render start. All values are hex strings.
@@ -137,16 +211,31 @@ Resolved from the active skin's CSS variables at render start. All values are he
 | `yellow` | `--t-yellow` | Mid-range frequencies |
 | `blue` | `--t-blue` | Low frequencies |
 
+### Extended Colors
+
+The 8 colors above cover the most common needs. If you need the background color, chrome text, or other skin values, they're available via additional properties on the same `colors` object:
+
+| Key | Source Variable | Typical Use |
+|-----|----------------|-------------|
+| `bg` | `--c-chrome-bg` | Panel background |
+| `text` | `--c-chrome-text` | UI text color |
+| `border` | `--c-chrome-border` | Border/divider color |
+| `hover` | `--c-chrome-hover` | Hover state background |
+| `termBg` | `--t-background` | Terminal background |
+| `termFg` | `--t-foreground` | Terminal foreground |
+
+These are resolved at render start, same as the primary 8.
+
 ### The `beat` Object
 
 Updated every frame by the beat detector (bass-weighted energy analysis).
 
 | Key | Type | Description |
 |-----|------|-------------|
-| `energy` | `number` | Current bass energy (0–255). |
+| `energy` | `number` | Current bass energy (0-255). |
 | `peak` | `number` | Decaying peak energy. Used internally for threshold. |
 | `isBeat` | `boolean` | `true` on the frame a beat is detected. |
-| `decay` | `number` | 0–1 value. Jumps to 1 on beat, decays at 0.92/frame. Use for smooth reactions. |
+| `decay` | `number` | 0-1 value. Jumps to 1 on beat, multiplied by 0.92 each frame (retains 92%). Use for smooth reactions. |
 
 **`beat.decay` is your best friend.** Multiply it into sizes, alphas, blur radii, and line widths for smooth beat-reactive visuals without any state management.
 
@@ -155,6 +244,40 @@ var lineWidth = 1.5 + beat.decay * 2;    // Thickens on beat, smoothly returns
 ctx.shadowBlur = beat.decay * 10;         // Glow pulses on beat
 var scale = 1 + beat.decay * 0.15;        // Subtle size pulse
 ```
+
+---
+
+## FFT & Data Details
+
+Understanding what's in the `data` array helps you write better visualizers.
+
+### Frequency mode (`dataType: "frequency"`)
+
+`data` is a `Uint8Array` with **128 elements** (FFT size 256, half = 128 frequency bins). Each bin ranges from 0 to 255, where 0 is silence and 255 is maximum energy at that frequency.
+
+Lower indices correspond to lower frequencies, higher indices to higher frequencies:
+- Bin 0 is ~0 Hz (DC offset — usually ignore this)
+- Bin 1-4 is sub-bass (~20-170 Hz)
+- Bin 5-15 is bass (~170-650 Hz)
+- Bin 16-40 is midrange (~650-1700 Hz)
+- Bin 41-80 is upper-mid / presence
+- Bin 81-127 is treble, up to ~half the sample rate (~22 kHz)
+
+### Waveform mode (`dataType: "waveform"`)
+
+`data` is a `Uint8Array` with **128 elements**. Each value represents an amplitude sample:
+- `128` = silence (zero crossing)
+- Values above 128 = positive amplitude
+- Values below 128 = negative amplitude
+- Range is 0-255, centered at 128
+
+### Both mode (`dataType: "both"`)
+
+`data` contains frequency data, `waveData` contains waveform data. Both are `Uint8Array` with 128 elements each. The canvas is **not** auto-cleared in this mode.
+
+### FFT Smoothing
+
+The FFT smoothing time constant is 0.8 (moderately smooth). This means the frequency values blend ~80% of the previous frame with ~20% of the current frame, reducing visual jitter. This is not configurable per-preset.
 
 ---
 
@@ -181,7 +304,7 @@ module.exports = function(ctx, data, W, H, colors, beat) {
 
 ## Canvas Clearing
 
-Moltamp clears the canvas before each frame for `"frequency"` and `"waveform"` presets. For `"both"` presets, it does **not** clear — this lets you do fade trails:
+MOLTamp clears the canvas before each frame for `"frequency"` and `"waveform"` presets. For `"both"` presets, it does **not** clear — this lets you do fade trails:
 
 ```js
 // In a "both" preset — manual fade instead of clear
@@ -194,6 +317,48 @@ If your `"both"` preset wants a clean slate, clear it yourself:
 ```js
 ctx.clearRect(0, 0, W, H);
 ```
+
+---
+
+## Hot Reload & Debugging
+
+### Hot Reload
+
+When you save `renderer.js`, the visualizer reloads automatically within a few seconds. No restart needed. This makes the iteration loop fast: edit, save, see the result.
+
+### Debugging
+
+If your renderer throws an error, the frame is silently skipped — you won't see a crash, but you also won't see your visualizer. To see errors:
+
+1. Open Chrome DevTools in MOLTamp: **Cmd+Shift+I**
+2. Check the **Console** tab for error messages
+
+You can use `console.log()` inside your renderer for debugging — it works normally. But remove it before sharing your preset. Your renderer fires 60 times per second, so a single `console.log()` call floods the console with thousands of messages per minute.
+
+### Testing
+
+To test your visualizer, play any audio on your Mac and the visualizer responds in real time. Any audio source works: Spotify, Apple Music, YouTube, a podcast — anything that produces system audio output.
+
+---
+
+## Testing Without Audio
+
+If you don't have audio playing, the `data` array will contain near-zero values (frequency mode) or flat 128 values (waveform mode). This is expected — your renderer should still run without errors.
+
+For quick testing, play any music or open a YouTube video. The visualizer responds immediately.
+
+You can also test shape, color, and structure with synthetic data by temporarily hardcoding test values:
+
+```js
+// Temporary test data -- remove before sharing
+for (var i = 0; i < data.length; i++) {
+  data[i] = Math.floor(128 + 127 * Math.sin(i * 0.1 + Date.now() * 0.001));
+}
+```
+
+This generates a smooth sine wave that scrolls over time, giving you moving data to work with even in silence.
+
+Note that the beat detector needs actual audio — `beat.isBeat` will always be `false` and `beat.decay` will stay at 0 without real audio input. To test beat reactivity, you need to play music.
 
 ---
 
@@ -456,6 +621,8 @@ module.exports = function(ctx, data, W, H, colors, beat) {
 };
 ```
 
+**OffscreenCanvas note:** `OffscreenCanvas` is available in the renderer environment. You can use it for feedback effects, double-buffering, and pre-rendering. Create it via `new OffscreenCanvas(w, h)` — the constructor is available without `document`. This is useful when you want trail effects in a `"frequency"` or `"waveform"` preset where the main canvas is auto-cleared each frame.
+
 ### Bezier Curves for Organic Shapes
 
 Smooth, flowing forms instead of jagged polylines.
@@ -527,8 +694,8 @@ module.exports = function(ctx, data, W, H, colors, beat) {
 **Zip format:** The `.zip` contains just two files:
 ```
 my-preset.zip
-├── preset.json
-└── renderer.js
++-- preset.json
++-- renderer.js
 ```
 
 ---
@@ -551,34 +718,35 @@ Clone any of these as a starting point.
 If you're using ChatGPT, Claude, Codex, or another AI to generate a preset, **paste this block** with your prompt:
 
 ```
-MOLTAMP VISUALIZER PRESET RULES — follow these exactly:
+MOLTAMP VISUALIZER PRESET RULES -- follow these exactly:
 
 FILE STRUCTURE:
 - preset.json (manifest) + renderer.js (render function)
-- preset.json requires: id, name. Optional: description, author, dataType.
+- preset.json requires: id, name. Optional: version, description, author, dataType.
 - dataType: "frequency" (FFT), "waveform" (raw audio), or "both" (frequency + waveform as 7th arg)
 
 RENDERER SIGNATURE:
   module.exports = function(ctx, data, W, H, colors, beat, waveData) { ... }
   - ctx: CanvasRenderingContext2D (2x scaled for Retina)
-  - data: Uint8Array — frequency bins (0-255) or waveform samples (128 = silence)
+  - data: Uint8Array[128] -- frequency bins (0-255) or waveform samples (128 = silence)
   - W, H: canvas size in CSS pixels
-  - colors: { accent, dim, magenta, cyan, green, red, yellow, blue } — hex strings from skin
-  - beat: { energy, peak, isBeat, decay } — decay is 0-1, smoothly falls after each beat
-  - waveData: Uint8Array | undefined — only when dataType is "both"
+  - colors: { accent, dim, magenta, cyan, green, red, yellow, blue, bg, text, border, hover, termBg, termFg } -- hex strings from skin
+  - beat: { energy, peak, isBeat, decay } -- decay is 0-1, smoothly falls after each beat
+  - waveData: Uint8Array[128] | undefined -- only when dataType is "both"
 
 RULES:
 - Pure Canvas 2D API only. No DOM, no document, no window, no require/import.
 - Use colors.* instead of hardcoded hex (so it works with every skin)
-- Reset globalAlpha, shadowBlur at end of function
-- Cap loops: Math.min(data.length, 64) — don't iterate all bins
+- Reset globalAlpha, shadowBlur, globalCompositeOperation at end of function
+- Cap loops: Math.min(data.length, 64) -- don't iterate all bins
 - Persistent state: declare vars outside module.exports
-- For "both" dataType: canvas is NOT auto-cleared — draw your own fade or clearRect
+- For "both" dataType: canvas is NOT auto-cleared -- draw your own fade or clearRect
+- OffscreenCanvas is available for feedback/double-buffering
 
 BEAT REACTIVITY:
 - beat.decay is your primary tool: 0-1 value, jumps to 1 on beat, decays at 0.92/frame
 - Multiply into sizes, alphas, blur radii for smooth pulsing
-- beat.isBeat is true for one frame on each beat — use for triggers (hue shifts, spawns)
+- beat.isBeat is true for one frame on each beat -- use for triggers (hue shifts, spawns)
 
 EXAMPLE:
   module.exports = function(ctx, data, W, H, colors, beat) {
@@ -595,6 +763,25 @@ EXAMPLE:
 
 ---
 
+## Submitting Your Preset
+
+Ready to share? Here's how to get your preset into the community repository.
+
+1. **Fork** the [moltamp-visualizers](https://github.com/shoot-here/moltamp-visualizers) repo
+2. **Create** your preset folder in `visualizers/your-preset-id/`
+3. **Include** `preset.json` and `renderer.js` (both required, nothing else)
+4. **Run through** the validation checklist below
+5. **Open a PR** using the preset submission template
+
+Reviewers check for:
+- Renders at 60fps without jank
+- Uses `colors.*` from the skin palette (no hardcoded hex)
+- Resets canvas state (`globalAlpha`, `shadowBlur`, `globalCompositeOperation`)
+- No unbounded state accumulation
+- Visually interesting and beat-reactive
+
+---
+
 ## Checklist
 
 Before sharing your preset:
@@ -603,8 +790,10 @@ Before sharing your preset:
 - [ ] `renderer.js` exports a function via `module.exports`
 - [ ] Uses `colors.*` instead of hardcoded hex values
 - [ ] Resets `globalAlpha` and `shadowBlur` at end of render
+- [ ] Resets `globalCompositeOperation` to `"source-over"` if changed
 - [ ] Loops are capped (`Math.min(data.length, N)`)
 - [ ] No DOM access, no `require`, no `import`
 - [ ] No unbounded state accumulation (arrays, objects growing each frame)
 - [ ] Tested with multiple skins (light and dark palettes)
 - [ ] Runs at 60fps without visible jank
+- [ ] Handles silent input gracefully (no errors when no audio is playing)
