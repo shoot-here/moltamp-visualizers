@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/shoot-here/moltamp-visualizers/main/.github/assets/banner.svg" alt="Moltamp Visualizers — audio-reactive Canvas presets for AI terminals" width="100%"/>
+<img src="https://moltamp.com/images/og-image.png" alt="MOLTamp — Skinnable Shell for AI Terminals" width="100%"/>
 
 <br/><br/>
 
