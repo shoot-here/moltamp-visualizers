@@ -13,7 +13,7 @@
 [![Spec](https://img.shields.io/badge/spec-VISUALIZERS.md-4d9fff?style=flat-square&labelColor=08080a)](VISUALIZERS.md)
 [![Gallery](https://img.shields.io/badge/gallery-moltamp.com-ff6b4d?style=flat-square&labelColor=08080a)](https://moltamp.com/community)
 
-**[Download Moltamp](https://moltamp.com)** &nbsp;&middot;&nbsp; **[Browse the Gallery](https://moltamp.com/community)** &nbsp;&middot;&nbsp; **[Authoring Guide](VISUALIZERS.md)** &nbsp;&middot;&nbsp; **[Contributing](CONTRIBUTING.md)**
+**[Download Moltamp](https://moltamp.com/download)** &nbsp;&middot;&nbsp; **[Browse the Gallery](https://moltamp.com/community)** &nbsp;&middot;&nbsp; **[Authoring Guide](VISUALIZERS.md)** &nbsp;&middot;&nbsp; **[Contributing](CONTRIBUTING.md)**
 
 </div>
 
